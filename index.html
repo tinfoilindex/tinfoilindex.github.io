@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tinfoil Index</title>
+<meta name="description" content="How paranoid is the internet today? A parody index built from Wikipedia attention to conspiracy theories. 50 is a normal day.">
+<meta property="og:title" content="Tinfoil Index">
+<meta property="og:description" content="How paranoid is the internet today? 50 is a normal day.">
+<meta name="theme-color" content="#101214">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='12 9 216 216'%3E%3Crect x='12' y='9' width='216' height='216' rx='44' fill='%23101214'/%3E%3Cpolygon points='76,176 120,58 164,176' fill='%23B3BAC3'/%3E%3Cpolygon points='76,176 120,58 120,176' fill='%23E3E6EA'/%3E%3Cpolygon points='120,58 164,176 142,176' fill='%238D96A1'/%3E%3Cpath d='M36 176H54L62 162L70 176H76L120 58L164 176H204' fill='none' stroke='%23FFD21F' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root {
+  /* One visual world, by choice: a market terminal at night. Mono type everywhere,
+     foil greys, and a single yellow signal colour that only marks "up" and "loud". */
+  --ground: #101214;
+  --tile: #181B1F;
+  --line: #2B3036;
+  --rule: #4A525C;
+  --ink: #F2F3F1;
+  --muted: #A6ADB6;
+  --signal: #FFD21F;
+  --silver: #AEB5BF;
+  --mono: "JetBrains Mono NL", "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: dark;
+}
+@font-face { font-family: "JetBrains Mono NL"; font-weight: 500; font-display: swap;
+  src: url("assets/fonts/JetBrainsMonoNL-Medium.ttf") format("truetype"); }
+@font-face { font-family: "JetBrains Mono NL"; font-weight: 800; font-display: swap;
+  src: url("assets/fonts/JetBrainsMonoNL-ExtraBold.ttf") format("truetype"); }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 500 15px/1.5 var(--mono); }
+main { max-width: 760px; margin: 0 auto; padding: 20px 16px 56px; display: grid; gap: 16px; }
+h1, h2, p, ol, table { margin: 0; }
+h2 { font-size: 13px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; text-wrap: balance; }
+a { color: var(--ink); text-underline-offset: 3px; }
+a:hover { color: var(--signal); }
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; border-radius: 4px; }
+.muted { color: var(--muted); }
+.up { color: var(--signal); }
+.down { color: var(--silver); }
+.tile { background: var(--tile); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 14px; }
+
+header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header svg { width: 44px; height: 34px; flex: none; }
+header h1 { font-size: 22px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+header p { flex-basis: 100%; color: var(--muted); }
+.lang { margin-left: auto; display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 7px 12px; cursor: pointer; }
+.seg:hover { color: var(--ink); }
+.seg[aria-pressed="true"] { background: var(--line); color: var(--ink); }
+
+.demo { border: 1px solid var(--signal); color: var(--signal); border-radius: 10px; padding: 8px 12px; font-weight: 800; }
+
+.hero { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; }
+/* The number is sized from its own column (43% of the width per em is four characters),
+   so it can never run into the hat, whatever the screen. The first size is for old browsers. */
+.hero > div:first-child { container-type: inline-size; }
+.reading { font-size: clamp(56px, 21vw, 176px); font-size: clamp(40px, 43cqi, 176px); font-weight: 800; line-height: .92; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.move { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 15px; }
+.move b { font-size: clamp(26px, 7vw, 40px); font-weight: 800; }
+.move svg { width: .8em; height: .5em; align-self: center; font-size: clamp(26px, 7vw, 40px); }
+.hat { width: clamp(104px, 28vw, 190px); height: auto; }
+.level { font-size: clamp(20px, 5.4vw, 30px); font-weight: 800; text-align: center; letter-spacing: .02em; }
+.level.loud { color: var(--signal); }
+.hero-foot { grid-column: 1 / -1; display: flex; gap: 6px 18px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+@media (prefers-reduced-motion: no-preference) {
+  .arc { animation: ping .5s ease-out backwards; transform-origin: var(--tip, 104px 65px); }
+  @keyframes ping { from { opacity: 0; transform: scale(.55); } }
+}
+
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ranges { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.chart { position: relative; height: 190px; margin-right: 38px; touch-action: pan-y; cursor: crosshair; }
+.chart svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.chart polyline { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.chart polygon { fill: var(--ink); opacity: .07; }
+.grid { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); }
+.grid.mid { border-top: 1px dashed var(--rule); }
+.grid span { position: absolute; left: 100%; top: -9px; width: 38px; padding-left: 12px; font-size: 11px; color: var(--muted); }
+.dot { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 3px var(--tile); }
+.cursor { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--muted); }
+.axis { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+.axis strong { color: var(--ink); font-weight: 500; }
+
+.movers { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; align-items: baseline; }
+.movers dt { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+.movers dd { margin: 0; display: flex; gap: 4px 16px; flex-wrap: wrap; }
+.tk { font-weight: 800; }
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 0 12px 8px 0; white-space: nowrap; }
+td { padding: 7px 12px 7px 0; border-top: 1px solid var(--line); vertical-align: baseline; }
+td.n, th.n { text-align: right; padding-right: 0; padding-left: 12px; white-space: nowrap; }
+td.title { color: var(--muted); min-width: 150px; }
+
+.how ol { padding-left: 22px; display: grid; gap: 8px; max-width: 65ch; }
+.scale { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: 13px; }
+.scale div { border-top: 3px solid var(--line); padding-top: 6px; color: var(--muted); }
+.scale div.on { border-color: var(--signal); color: var(--ink); }
+.scale b { display: block; color: inherit; font-weight: 800; }
+.mini { display: block; width: 100%; max-width: 64px; height: auto; margin: 2px 0 6px -6px; }
+.mini .arc { animation: none; }
+.follow { display: flex; gap: 10px 14px; flex-wrap: wrap; align-items: center; }
+.btn { display: inline-block; border: 1px solid var(--signal); color: var(--signal); border-radius: 10px; padding: 8px 14px; text-decoration: none; font-weight: 800; }
+.btn:hover { background: var(--signal); color: var(--ground); }
+footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px; }
+[hidden] { display: none !important; }
+/* Narrow screens. Each step drops or tightens something so that nothing ever has to
+   scroll sideways: 520 and under loses the "vs usual" column, 400 and under tightens
+   the table, 345 and under (the smallest phones) loses the change column too. */
+@media (max-width: 520px) {
+  .tile { padding: 16px; }
+  td.title { min-width: 96px; font-size: 13px; }
+  th:last-child, td:last-child { display: none; }
+  th.n:nth-last-child(2), td.n:nth-last-child(2) { padding-right: 0; }
+}
+@media (max-width: 400px) {
+  td { font-size: 14px; padding-right: 8px; }
+  th { padding-right: 8px; }
+  td.n, th.n { padding-left: 8px; }
+  td.title { min-width: 0; overflow-wrap: anywhere; hyphens: auto; }
+}
+@media (max-width: 380px) { .scale { font-size: 12px; } }
+@media (max-width: 345px) {
+  .scale { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
+  th:nth-last-child(2), td:nth-last-child(2) { display: none; }
+  th.n:nth-last-child(3), td.n:nth-last-child(3) { padding-right: 0; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <svg viewBox="30 48 180 140" aria-hidden="true">
+      <polygon points="76,176 120,58 164,176" fill="#B3BAC3"/>
+      <polygon points="76,176 120,58 120,176" fill="#E3E6EA"/>
+      <polygon points="120,58 164,176 142,176" fill="#8D96A1"/>
+      <path d="M36 176H54L62 162L70 176H76L120 58L164 176H204" fill="none" stroke="#FFD21F" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1 id="name">Tinfoil Index</h1>
+    <div class="lang" role="group" aria-label="Language">
+      <button class="seg" type="button" id="lang-en" data-lang="en">EN</button>
+      <button class="seg" type="button" id="lang-ru" data-lang="ru">RU</button>
+    </div>
+    <p id="tagline">How paranoid is the internet today?</p>
+  </header>
+
+  <p class="demo" id="demo" hidden></p>
+  <p class="tile" id="status" role="status">Reading the instruments...</p>
+
+  <section class="tile hero" id="hero" hidden aria-labelledby="level">
+    <div>
+      <div class="reading" id="reading">50.0</div>
+      <p class="move" id="move"></p>
+    </div>
+    <div>
+      <svg class="hat" id="hat" viewBox="38 8 164 228" aria-hidden="true">
+        <circle class="h-head" cx="120" cy="184" r="42" fill="#48505B"/>
+        <g class="h-wrap" hidden>
+          <polygon points="164,178 164,184 155.6,209.9 133.6,225.8 106.4,225.8 84.4,209.9 76,184 76,178" fill="#C9CED5"/>
+          <polygon points="120,184 164,184 155.6,209.9" fill="#8D96A1"/>
+          <polygon points="120,184 155.6,209.9 133.6,225.8" fill="#AEB5BF"/>
+          <polygon points="120,184 133.6,225.8 106.4,225.8" fill="#C9CED5"/>
+          <polygon points="120,184 106.4,225.8 84.4,209.9" fill="#E3E6EA"/>
+          <polygon points="120,184 84.4,209.9 76,184" fill="#F4F5F7"/>
+        </g>
+        <path class="h-strap" d="M162.8 179.5A43 43 0 1 1 77.2 179.5" fill="none" stroke="#C9CED5" stroke-width="6" hidden/>
+        <g class="h-cone" transform="translate(0 8) rotate(-10 120 150)">
+          <polygon points="58,160 182,160 174,138 170,138 120,56 70,138 66,138" fill="#C9CED5"/>
+          <polygon points="70,138 120,56 100,138" fill="#E3E6EA"/>
+          <polygon points="120,56 100,138 138,138" fill="#F4F5F7"/>
+          <polygon points="120,56 138,138 170,138" fill="#AEB5BF"/>
+          <polygon points="58,160 112,160 108,138 66,138" fill="#C9CED5"/>
+          <polygon points="112,160 182,160 174,138 108,138" fill="#8D96A1"/>
+        </g>
+        <g class="h-mast" hidden>
+          <path d="M120 80V62" fill="none" stroke="#C9CED5" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="120" cy="62" r="5.5" fill="#F4F5F7"/>
+        </g>
+        <g class="h-arcs" fill="none" stroke="#FFD21F" stroke-width="8" stroke-linecap="round"></g>
+      </svg>
+      <p class="level" id="level"></p>
+    </div>
+    <p class="hero-foot"><span id="when"></span><span id="remark"></span></p>
+  </section>
+
+  <section class="tile" id="history" hidden aria-labelledby="h-history">
+    <div class="row">
+      <h2 id="h-history">History</h2>
+      <div class="ranges" role="group" aria-label="Range">
+        <button class="seg" type="button" id="range-30" data-range="30">30D</button>
+        <button class="seg" type="button" id="range-120" data-range="120">120D</button>
+        <button class="seg" type="button" id="range-365" data-range="365">1Y</button>
+        <button class="seg" type="button" id="range-all" data-range="0">ALL</button>
+      </div>
+    </div>
+    <div class="chart" id="chart" role="img">
+      <div class="grid" style="top:0"><span>100</span></div>
+      <div class="grid mid" style="top:50%"><span>50</span></div>
+      <div class="grid" style="top:100%"><span>0</span></div>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polygon id="area" points=""/>
+        <polyline id="line" points="" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div class="cursor" id="cursor" hidden></div>
+      <div class="dot" id="dot"></div>
+    </div>
+    <div class="axis"><span id="x0"></span><strong id="readout"></strong><span id="x1"></span></div>
+  </section>
+
+  <section class="tile" id="board" hidden aria-labelledby="h-board">
+    <h2 id="h-board">Tickers</h2>
+    <dl class="movers" id="movers"></dl>
+    <div class="scroll">
+      <table>
+        <thead><tr><th id="th-t">Ticker</th><th id="th-n">Theory</th><th class="n" id="th-r">Reading</th><th class="n" id="th-c">Change</th><th class="n" id="th-u">vs usual</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="tile how" aria-labelledby="h-how">
+    <h2 id="h-how">How the number is made</h2>
+    <ol id="how"></ol>
+    <p class="muted" id="legend"></p>
+    <div class="scale" id="scale"></div>
+  </section>
+
+  <section class="follow" id="follow" hidden></section>
+
+  <footer>
+    <span id="foot1">Parody. Not financial advice.</span>
+    <span id="foot2">Data: Wikimedia pageviews, CC0.</span>
+  </footer>
+</main>
+
+<script>
+// ---------------------------------------------------------------------------
+// Settings. Empty links are not shown.
+// The numbers come from out/latest.json, which sits next to this page on the public
+// site. repo ("owner/name") is the public repository that holds the page and the
+// numbers: the footer links to it, and the page reads the numbers straight from it
+// if its own folder does not answer.
+// ---------------------------------------------------------------------------
+const CONFIG = {
+  links: {
+    en: { telegram: "https://t.me/tinfoilindex", x: "https://x.com/tinfoilindex" },
+    ru: { telegram: "https://t.me/indexfolgi" }
+  },
+  repo: "tinfoilindex/tinfoilindex.github.io",
+  branch: "HEAD",
+  dataBase: ""
+};
+
+const T = {
+  en: {
+    name: "Tinfoil Index", tagline: "How paranoid is the internet today?",
+    when: "Reading for {date}", vs: "vs previous reading",
+    levels: { calm: "CALM", alert: "ALERT", paranoid: "PARANOID", maximum: "MAXIMUM" },
+    scale: { calm: "below 50", alert: "50 to 72", paranoid: "73 to 87", maximum: "88 and up" },
+    history: "History", mid: "50 = a normal day", all: "ALL",
+    board: "Tickers", hottest: "Hottest", rising: "Rising", falling: "Falling", none: "none",
+    cols: ["Ticker", "Theory", "Reading", "Change", "vs usual"],
+    how: "How the number is made",
+    steps: [
+      "Every day we count how many people read Wikipedia's articles on {n} conspiracy theories.",
+      "Each theory is compared with its own past year. Its reading runs from 0 to 100, and 50 is a normal day for that theory.",
+      "The index is the same idea for the whole basket: 50 is a normal day, 73 is unusual, 88 is rare.",
+      "It measures attention, not belief. Reading about lizard people does not make you one."
+    ],
+    legend: "The hat follows the level: the higher the index, the more foil.",
+    highSince: "Highest since {date}.", lowSince: "Lowest since {date}.",
+    highRecord: "Highest reading on record.", lowRecord: "Lowest reading on record.",
+    runUp: "Up {n} days in a row.", runDown: "Down {n} days in a row.",
+    follow: "Get the daily reading:", telegram: "Telegram", x: "X",
+    foot1: "Parody. Not financial advice.", foot2: "Data: Wikimedia pageviews, CC0.", code: "Method and data",
+    loading: "Reading the instruments...", error: "No reading right now. Try again in a few minutes.",
+    missing: "No reading for this language right now.",
+    demo: "Demo numbers. Not a real reading.",
+    months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], dec: "."
+  },
+  ru: {
+    name: "Индекс фольги", tagline: "Насколько интернет сегодня параноит?",
+    when: "Замер за {date}", vs: "к прошлому замеру",
+    levels: { calm: "СПОКОЙНО", alert: "НАСТОРОЖЕ", paranoid: "ПАРАНОЙЯ", maximum: "МАКСИМУМ" },
+    scale: { calm: "ниже 50", alert: "от 50 до 72", paranoid: "от 73 до 87", maximum: "от 88" },
+    history: "История", mid: "50 = обычный день", all: "ВСЁ",
+    board: "Тикеры", hottest: "Горячее всего", rising: "Растут", falling: "Падают", none: "нет",
+    cols: ["Тикер", "Теория", "Замер", "Изм.", "К обычному"],
+    how: "Как считается число",
+    steps: [
+      "Каждый день мы считаем, сколько людей читает в Википедии статьи о теориях заговора. В корзине их {n}.",
+      "Каждая теория сравнивается со своим последним годом. Её замер идёт от 0 до 100, и 50 значит обычный день для этой теории.",
+      "Индекс считается так же, но по всей корзине: 50 это обычный день, 73 уже необычно, 88 бывает редко.",
+      "Мы измеряем внимание, а не веру. Чтение про рептилоидов не делает вас рептилоидом."
+    ],
+    legend: "Шапочка меняется вместе с уровнем: чем выше индекс, тем больше фольги.",
+    highSince: "Максимум с {date}.", lowSince: "Минимум с {date}.",
+    highRecord: "Рекорд за всю историю замеров.", lowRecord: "Минимум за всю историю замеров.",
+    runUp: "Рост {n}-й день подряд.", runDown: "Падение {n}-й день подряд.",
+    follow: "Ежедневный замер:", telegram: "Telegram", x: "X",
+    foot1: "Пародия. Не инвестиционная рекомендация.", foot2: "Данные: просмотры страниц Wikimedia, CC0.", code: "Метод и данные",
+    loading: "Снимаем показания...", error: "Замера сейчас нет. Попробуйте через несколько минут.",
+    missing: "Для этого языка замера сейчас нет.",
+    demo: "Демо-данные. Это не настоящий замер.",
+    months: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"], dec: ","
+  }
+};
+
+// The mascot at each level: how the hat sits, where its tip is, how many signal arcs
+// and on how many sides. The same numbers the daily picture is drawn with (card.py);
+// tests/test_card.py compares the two, so change them there first.
+const HAT = {"calm": {"pose": "translate(4 6) rotate(-22 120 150)", "tip": [88.8, 68.8], "arcs": 0, "sides": 1}, "alert": {"pose": "translate(0 8) rotate(-10 120 150)", "tip": [103.7, 65.4], "arcs": 1, "sides": 1}, "paranoid": {"pose": "translate(0 24) rotate(0 120 150)", "tip": [120, 80], "arcs": 2, "sides": 1}, "maximum": {"pose": "translate(0 24) rotate(0 120 150)", "tip": [120, 62], "arcs": 3, "sides": 2}};
+
+const $ = (id) => document.getElementById(id);
+const state = { lang: "en", latest: null, range: 120, history: {}, points: [], failed: false };
+
+// ----------------------------------------------------------------- helpers
+function num(v, signed) {
+  const s = Math.abs(v).toFixed(1).replace(".", T[state.lang].dec);
+  if (signed) return (v < 0 ? "−" : "+") + s;
+  return (v < 0 ? "−" : "") + s;
+}
+function dateWords(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return d + " " + T[state.lang].months[m - 1] + " " + y;
+}
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function caret(up) {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 32 20");
+  svg.setAttribute("aria-hidden", "true");
+  const p = document.createElementNS(ns, "path");
+  p.setAttribute("d", up ? "M4 16L16 4L28 16" : "M4 4L16 16L28 4");
+  p.setAttribute("fill", "none");
+  p.setAttribute("stroke", "currentColor");
+  p.setAttribute("stroke-width", "5");
+  p.setAttribute("stroke-linecap", "round");
+  svg.appendChild(p);
+  return svg;
+}
+function drawHat(svg, level) {
+  if (!HAT[level]) level = "alert";
+  if (svg.getAttribute("data-level") === level) return;
+  svg.setAttribute("data-level", level);
+  const h = HAT[level], x = h.tip[0], y = h.tip[1], part = (name) => svg.querySelector(".h-" + name);
+  part("cone").setAttribute("transform", h.pose);
+  part("head").toggleAttribute("hidden", level === "maximum");
+  part("wrap").toggleAttribute("hidden", level !== "maximum");
+  part("strap").toggleAttribute("hidden", level !== "paranoid");
+  part("mast").toggleAttribute("hidden", level !== "maximum");
+  svg.style.setProperty("--tip", x + "px " + y + "px");
+  const arcs = part("arcs"), up = (50 * Math.PI) / 180;
+  arcs.replaceChildren();
+  [26, 44, 62].slice(0, h.arcs).forEach((r, i) => {
+    for (const side of h.sides === 2 ? [1, -1] : [1]) {
+      const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      p.setAttribute("class", "arc");
+      p.setAttribute("d", "M" + (x + side * r).toFixed(1) + " " + y + "A" + r + " " + r + " 0 0 " + (side > 0 ? 0 : 1) +
+        " " + (x + side * r * Math.cos(up)).toFixed(1) + " " + (y - r * Math.sin(up)).toFixed(1));
+      p.style.animationDelay = (0.12 * i).toFixed(2) + "s";
+      arcs.appendChild(p);
+    }
+  });
+}
+function smallHat(level) {
+  const svg = $("hat").cloneNode(true);   // the same drawing as the big one, so the two cannot differ
+  svg.removeAttribute("id");
+  svg.removeAttribute("data-level");
+  svg.setAttribute("class", "mini");
+  drawHat(svg, level);
+  return svg;
+}
+function remarks(b) {
+  const t = T[state.lang], out = [];
+  const hi = b.high || {}, lo = b.low || {};
+  if (hi.record) out.push(t.highRecord);
+  else if ((hi.days || 0) >= 30) out.push(t.highSince.replace("{date}", dateWords(hi.since)));
+  if (lo.record) out.push(t.lowRecord);
+  else if ((lo.days || 0) >= 30) out.push(t.lowSince.replace("{date}", dateWords(lo.since)));
+  if ((b.run || 0) >= 3 && b.direction !== "flat") out.push((b.direction === "up" ? t.runUp : t.runDown).replace("{n}", b.run));
+  return out;
+}
+
+// -------------------------------------------------------------------- data
+function dataBases() {
+  const list = [];
+  if (CONFIG.dataBase) list.push(CONFIG.dataBase.replace(/\/?$/, "/"));
+  list.push("");  // the same folder as this page: on the public site the numbers sit next to it
+  const m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+  const repo = CONFIG.repo || (m ? m[1] + "/" + (location.pathname.split("/")[1] || m[1] + ".github.io") : "");
+  // A second way to the same files, tried only if the first does not answer. It comes second
+  // because some networks cannot reach this address, and a reader there would wait for nothing.
+  if (repo) list.push("https://raw.githubusercontent.com/" + repo + "/" + CONFIG.branch + "/");
+  return { list, repo };
+}
+async function get(path, kind) {
+  let lastError = null;
+  for (const base of dataBases().list) {
+    try {
+      const r = await fetch(base + path, { cache: "no-store" });
+      if (!r.ok) throw new Error(String(r.status));
+      return kind === "json" ? await r.json() : await r.text();
+    } catch (e) { lastError = e; }
+  }
+  throw lastError;
+}
+async function historyFor(lang) {
+  if (!state.history[lang]) {
+    const text = await get("out/history_" + lang + ".csv", "text");
+    state.history[lang] = text.trim().split(/\r?\n/).slice(1)
+      .map((line) => line.replace(/^﻿/, "").split(","))
+      .filter((p) => p.length >= 2 && !isNaN(parseFloat(p[1])))
+      .map((p) => [p[0], parseFloat(p[1])]);
+  }
+  return state.history[lang];
+}
+
+// ------------------------------------------------------------------- chart
+function drawChart(points) {
+  state.points = points;
+  const n = points.length;
+  const X = (i) => (n < 2 ? 100 : (100 * i) / (n - 1));
+  const Y = (v) => 100 - Math.max(0, Math.min(100, v));
+  const line = points.map((p, i) => X(i).toFixed(2) + "," + Y(p[1]).toFixed(2)).join(" ");
+  $("line").setAttribute("points", line);
+  $("area").setAttribute("points", n ? "0,100 " + line + " 100,100" : "");
+  if (!n) return;
+  const last = points[n - 1];
+  $("dot").style.left = X(n - 1) + "%";
+  $("dot").style.top = Y(last[1]) + "%";
+  $("x0").textContent = dateWords(points[0][0]);
+  $("x1").textContent = dateWords(last[0]);
+  $("readout").textContent = T[state.lang].mid;
+  $("cursor").hidden = true;
+  const lo = Math.min(...points.map((p) => p[1])), hi = Math.max(...points.map((p) => p[1]));
+  $("chart").setAttribute("aria-label", T[state.lang].history + ": " + dateWords(points[0][0]) + " → " +
+    dateWords(last[0]) + ", " + num(lo) + " … " + num(hi) + ", " + num(last[1]));
+}
+function probe(ev) {
+  const n = state.points.length;
+  if (n < 2) return;
+  const box = $("chart").getBoundingClientRect();
+  const frac = Math.max(0, Math.min(1, (ev.clientX - box.left) / box.width));
+  const i = Math.round(frac * (n - 1));
+  $("cursor").hidden = false;
+  $("cursor").style.left = (100 * i) / (n - 1) + "%";
+  $("readout").textContent = dateWords(state.points[i][0]) + ": " + num(state.points[i][1]);
+}
+async function showRange() {
+  const b = state.latest && state.latest.langs && state.latest.langs[state.lang];
+  if (!b) return;
+  for (const btn of document.querySelectorAll("[data-range]"))
+    btn.setAttribute("aria-pressed", String(Number(btn.dataset.range) === state.range));
+  let points = b.spark || [];
+  if (state.range === 30) points = points.slice(-30);
+  if (state.range === 365 || state.range === 0) {
+    const lang = state.lang;
+    try {
+      const all = await historyFor(lang);
+      if (lang !== state.lang) return;  // the language changed while loading
+      points = state.range ? all.slice(-365) : all;
+    } catch (e) { /* the long history is a bonus: keep the 120 days */ }
+  }
+  drawChart(points);
+}
+
+// ------------------------------------------------------------------ render
+function render() {
+  const t = T[state.lang];
+  document.documentElement.lang = state.lang;
+  document.title = t.name;
+  $("name").textContent = t.name;
+  $("tagline").textContent = t.tagline;
+  $("h-history").textContent = t.history;
+  $("range-all").textContent = t.all;
+  $("h-board").textContent = t.board;
+  $("h-how").textContent = t.how;
+  $("legend").textContent = t.legend;
+  $("foot1").textContent = t.foot1;
+  ["th-t", "th-n", "th-r", "th-c", "th-u"].forEach((id, i) => { $(id).textContent = t.cols[i]; });
+  for (const btn of document.querySelectorAll("[data-lang]"))
+    btn.setAttribute("aria-pressed", String(btn.dataset.lang === state.lang));
+
+  const foot2 = $("foot2");
+  foot2.textContent = t.foot2 + " ";
+  const repo = dataBases().repo;
+  if (repo) {
+    const a = el("a", "", t.code);
+    a.href = "https://github.com/" + repo;
+    foot2.appendChild(a);
+  }
+
+  const links = CONFIG.links[state.lang] || {};
+  const follow = $("follow");
+  follow.replaceChildren();
+  const shown = ["telegram", "x"].filter((k) => links[k]);
+  follow.hidden = !shown.length;
+  if (shown.length) follow.appendChild(el("span", "muted", t.follow));
+  for (const k of shown) {
+    const a = el("a", "btn", t[k]);
+    a.href = links[k];
+    follow.appendChild(a);
+  }
+
+  const latest = state.latest;
+  const b = latest && latest.langs && latest.langs[state.lang];
+  const levels = (latest && latest.levels) || [];
+  const size = b && b.basket ? b.basket.size : 26;
+
+  const how = $("how");
+  how.replaceChildren(...t.steps.map((s) => el("li", "", s.replace("{n}", size))));
+  const scale = $("scale");
+  scale.replaceChildren(...["calm", "alert", "paranoid", "maximum"].map((name) => {
+    const d = el("div", b && b.level === name ? "on" : "");
+    d.appendChild(smallHat(name));
+    d.appendChild(el("b", "", t.levels[name]));
+    d.appendChild(document.createTextNode(t.scale[name]));
+    return d;
+  }));
+
+  $("demo").hidden = !(latest && latest.demo);
+  $("demo").textContent = t.demo;
+  const status = $("status");
+  status.hidden = Boolean(b);
+  status.textContent = state.failed ? t.error : latest ? t.missing : t.loading;
+  for (const id of ["hero", "history", "board"]) $(id).hidden = !b;
+  if (!b) return;
+
+  $("reading").textContent = num(b.index);
+  const move = $("move");
+  move.replaceChildren();
+  if (b.change !== null && b.change !== undefined) {
+    move.className = "move " + (b.change > 0 ? "up" : b.change < 0 ? "down" : "muted");
+    if (b.change !== 0) move.appendChild(caret(b.change > 0));
+    move.appendChild(el("b", "", num(b.change, b.change !== 0)));
+    move.appendChild(el("span", "muted", t.vs));
+  }
+  drawHat($("hat"), b.level);
+  $("level").textContent = t.levels[b.level] || "";
+  $("level").className = "level" + (b.level === "paranoid" || b.level === "maximum" ? " loud" : "");
+  $("when").textContent = t.when.replace("{date}", dateWords(b.date));
+  $("remark").textContent = remarks(b)[0] || "";
+
+  const P = (latest.prefix || "^");
+  const movers = $("movers");
+  movers.replaceChildren();
+  const addRow = (label, nodes) => {
+    movers.appendChild(el("dt", "", label));
+    const dd = el("dd");
+    nodes.forEach((x) => dd.appendChild(x));
+    movers.appendChild(dd);
+  };
+  const chip = (r, cls) => {
+    const s = el("span", "");
+    s.appendChild(el("span", "tk " + cls, P + r.ticker));
+    s.appendChild(document.createTextNode(" " + Math.round(r.score)));
+    return s;
+  };
+  if (b.driver && b.driver.ticker) {
+    const s = el("span", "");
+    s.appendChild(el("span", "tk", P + b.driver.ticker));
+    if (b.driver.usual !== null && b.driver.usual !== undefined)
+      s.appendChild(el("span", "up", " ×" + num(b.driver.usual)));
+    if (b.driver.title) s.appendChild(el("span", "muted", " " + b.driver.title));
+    addRow(t.hottest, [s]);
+  }
+  for (const [key, cls] of [["rising", "up"], ["falling", "down"]]) {
+    const rows = b[key] || [];
+    addRow(t[key], rows.length ? rows.map((r) => chip(r, cls)) : [el("span", "muted", t.none)]);
+  }
+
+  const body = $("rows");
+  body.replaceChildren();
+  const all = Object.entries(b.tickers || {}).sort((x, y) => y[1].score - x[1].score);
+  for (const [tk, v] of all) {
+    const tr = el("tr");
+    tr.appendChild(el("td", "tk", P + tk));
+    tr.appendChild(el("td", "title", v.title || ""));
+    tr.appendChild(el("td", "n", String(Math.round(v.score))));
+    const c = v.change;
+    tr.appendChild(el("td", "n " + (c > 0 ? "up" : c < 0 ? "down" : "muted"),
+      c === null || c === undefined ? "" : num(c, c !== 0)));
+    tr.appendChild(el("td", "n muted", v.usual === null || v.usual === undefined ? "" : "×" + num(v.usual)));
+    body.appendChild(tr);
+  }
+  showRange();
+}
+
+// -------------------------------------------------------------------- boot
+function pickLang() {
+  const h = location.hash.replace("#", "");
+  if (h === "en" || h === "ru") return h;
+  return (navigator.language || "en").toLowerCase().startsWith("ru") ? "ru" : "en";
+}
+for (const btn of document.querySelectorAll("[data-lang]"))
+  btn.addEventListener("click", () => { location.hash = btn.dataset.lang; });
+for (const btn of document.querySelectorAll("[data-range]"))
+  btn.addEventListener("click", () => { state.range = Number(btn.dataset.range); showRange(); });
+window.addEventListener("hashchange", () => { state.lang = pickLang(); render(); });
+$("chart").addEventListener("pointermove", probe);
+$("chart").addEventListener("pointerdown", probe);
+$("chart").addEventListener("pointerleave", () => { $("cursor").hidden = true; $("readout").textContent = T[state.lang].mid; });
+
+state.lang = pickLang();
+render();
+get("out/latest.json", "json")
+  .then((latest) => { state.latest = latest; })
+  .catch(() => { state.failed = true; })
+  .finally(render);
+</script>
+</body>
+</html>
