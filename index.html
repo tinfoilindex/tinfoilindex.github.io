@@ -59,6 +59,8 @@ header p { flex-basis: 100%; color: var(--muted); }
    so it can never run into the hat, whatever the screen. The first size is for old browsers. */
 .hero > div:first-child { container-type: inline-size; }
 .reading { font-size: clamp(56px, 21vw, 176px); font-size: clamp(40px, 43cqi, 176px); font-weight: 800; line-height: .92; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+/* A decimal comma hangs below the line, where a point does not: give it room above the change. */
+:lang(ru) .reading { padding-bottom: .1em; }
 .move { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 15px; }
 .move b { font-size: clamp(26px, 7vw, 40px); font-weight: 800; }
 .move svg { width: .8em; height: .5em; align-self: center; font-size: clamp(26px, 7vw, 40px); }
@@ -83,7 +85,8 @@ header p { flex-basis: 100%; color: var(--muted); }
 .dot { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 3px var(--tile); }
 .cursor { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--muted); }
 .axis { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
-.axis strong { color: var(--ink); font-weight: 500; }
+.axis span { white-space: nowrap; }
+.axis strong { color: var(--ink); font-weight: 500; text-align: center; }
 
 .movers { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; align-items: baseline; }
 .movers dt { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
@@ -261,7 +264,8 @@ const T = {
     when: "Reading for {date}", vs: "vs previous reading",
     levels: { calm: "CALM", alert: "ALERT", paranoid: "PARANOID", maximum: "MAXIMUM" },
     scale: { calm: "below 50", alert: "50 to 72", paranoid: "73 to 87", maximum: "88 and up" },
-    history: "History", mid: "50 = a normal day", all: "ALL",
+    history: "History", mid: "50 = a normal day", weekly: "weekly average", monthly: "monthly average",
+    ranges: { 30: "30D", 120: "120D", 365: "1Y", 0: "ALL" },
     board: "Tickers", hottest: "Hottest", rising: "Rising", falling: "Falling", none: "none",
     cols: ["Ticker", "Theory", "Reading", "Change", "vs usual"],
     how: "How the number is made",
@@ -287,7 +291,8 @@ const T = {
     when: "Замер за {date}", vs: "к прошлому замеру",
     levels: { calm: "СПОКОЙНО", alert: "НАСТОРОЖЕ", paranoid: "ПАРАНОЙЯ", maximum: "МАКСИМУМ" },
     scale: { calm: "ниже 50", alert: "от 50 до 72", paranoid: "от 73 до 87", maximum: "от 88" },
-    history: "История", mid: "50 = обычный день", all: "ВСЁ",
+    history: "История", mid: "50 = обычный день", weekly: "среднее за неделю", monthly: "среднее за месяц",
+    ranges: { 30: "30Д", 120: "120Д", 365: "1Г", 0: "ВСЁ" },
     board: "Тикеры", hottest: "Горячее всего", rising: "Растут", falling: "Падают", none: "нет",
     cols: ["Тикер", "Теория", "Замер", "Изм.", "К обычному"],
     how: "Как считается число",
@@ -306,7 +311,10 @@ const T = {
     loading: "Снимаем показания...", error: "Замера сейчас нет. Попробуйте через несколько минут.",
     missing: "Для этого языка замера сейчас нет.",
     demo: "Демо-данные. Это не настоящий замер.",
-    months: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"], dec: ","
+    months: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"], dec: ",",
+    // The chart has little room, so it writes months short: after a day number, and on their own.
+    monthsShort: ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"],
+    monthsAlone: ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"]
   }
 };
 
@@ -316,7 +324,7 @@ const T = {
 const HAT = {"calm": {"pose": "translate(4 6) rotate(-22 120 150)", "tip": [88.8, 68.8], "arcs": 0, "sides": 1}, "alert": {"pose": "translate(0 8) rotate(-10 120 150)", "tip": [103.7, 65.4], "arcs": 1, "sides": 1}, "paranoid": {"pose": "translate(0 24) rotate(0 120 150)", "tip": [120, 80], "arcs": 2, "sides": 1}, "maximum": {"pose": "translate(0 24) rotate(0 120 150)", "tip": [120, 62], "arcs": 3, "sides": 2}};
 
 const $ = (id) => document.getElementById(id);
-const state = { lang: "en", latest: null, range: 120, history: {}, points: [], failed: false };
+const state = { lang: "en", latest: null, range: 120, history: {}, points: [], idle: "", failed: false };
 
 // ----------------------------------------------------------------- helpers
 function num(v, signed) {
@@ -425,26 +433,85 @@ async function historyFor(lang) {
   return state.history[lang];
 }
 
+// ------------------------------------------------------------ chart points
+// What the chart draws for each range. This block touches nothing on the page, so
+// tests/test_page.py can run it on its own.
+// The two short ranges show every day. The long ones show averages: a year by the week, the
+// whole history by the month. Some four thousand daily points do not fit across a phone. A
+// line that turns at every pixel reads as a solid wall, and nobody can see the months that
+// ran hot. The label under the chart says which of the three it is.
+// A point is { v, label, from, to }: the value, its name in the readout, and the days it covers.
+function dayMonth(iso, t) {
+  const [, m, d] = iso.split("-").map(Number);
+  return d + " " + (t.monthsShort || t.months)[m - 1];
+}
+function monthYear(iso, t) {
+  const [y, m] = iso.split("-").map(Number);
+  return (t.monthsAlone || t.months)[m - 1] + " " + y;
+}
+function average(days) {
+  return days.reduce((sum, day) => sum + day[1], 0) / days.length;
+}
+function dailyPoints(days, t) {
+  return days.map(([iso, v]) => ({ v, label: dayMonth(iso, t) + " " + iso.slice(0, 4), from: iso, to: iso }));
+}
+function weeklyPoints(days, t) {
+  // Weeks are counted back from the latest day, so the last point is always the last seven days
+  // and no week is ever half full. Fifty-two of them make the year.
+  const out = [];
+  for (let end = days.length; end >= 7 && out.length < 52; end -= 7) {
+    const week = days.slice(end - 7, end), from = week[0][0], to = week[6][0];
+    const sameMonth = from.slice(0, 7) === to.slice(0, 7);
+    out.unshift({ v: average(week), from, to,
+      label: (sameMonth ? String(Number(from.slice(8))) : dayMonth(from, t)) + "–" + dayMonth(to, t) });
+  }
+  return out;
+}
+function monthlyPoints(days, t) {
+  const months = [];
+  for (const day of days) {
+    const last = months[months.length - 1];
+    if (last && last[0][0].slice(0, 7) === day[0].slice(0, 7)) last.push(day);
+    else months.push([day]);
+  }
+  // The history starts in the last days of a month: four days are not a month's average.
+  // The month still running is kept: it is the average of its days so far.
+  if (months.length > 1 && months[0].length < 15) months.shift();
+  return months.map((m) => ({ v: average(m), label: monthYear(m[0][0], t), from: m[0][0], to: m[m.length - 1][0] }));
+}
+// spark: the last 120 days, which come with the latest reading. history: every day, or null
+// when the long file could not be loaded; then the long ranges show the 120 days.
+function chartView(range, spark, history, t) {
+  let points, idle = t.mid, end = dayMonth;
+  if (history && range === 365) { points = weeklyPoints(history, t); idle = t.weekly; end = monthYear; }
+  else if (history && range === 0) { points = monthlyPoints(history, t); idle = t.monthly; end = monthYear; }
+  else points = dailyPoints(range === 30 ? spark.slice(-30) : spark, t);
+  const n = points.length;
+  return { points, idle, averaged: idle !== t.mid, ends: n ? [end(points[0].from, t), end(points[n - 1].to, t)] : ["", ""] };
+}
+
 // ------------------------------------------------------------------- chart
-function drawChart(points) {
+function drawChart(view) {
+  const points = view.points;
   state.points = points;
+  state.idle = view.idle;
   const n = points.length;
   const X = (i) => (n < 2 ? 100 : (100 * i) / (n - 1));
   const Y = (v) => 100 - Math.max(0, Math.min(100, v));
-  const line = points.map((p, i) => X(i).toFixed(2) + "," + Y(p[1]).toFixed(2)).join(" ");
+  const line = points.map((p, i) => X(i).toFixed(2) + "," + Y(p.v).toFixed(2)).join(" ");
   $("line").setAttribute("points", line);
   $("area").setAttribute("points", n ? "0,100 " + line + " 100,100" : "");
   if (!n) return;
   const last = points[n - 1];
   $("dot").style.left = X(n - 1) + "%";
-  $("dot").style.top = Y(last[1]) + "%";
-  $("x0").textContent = dateWords(points[0][0]);
-  $("x1").textContent = dateWords(last[0]);
-  $("readout").textContent = T[state.lang].mid;
+  $("dot").style.top = Y(last.v) + "%";
+  $("x0").textContent = view.ends[0];
+  $("x1").textContent = view.ends[1];
+  $("readout").textContent = view.idle;
   $("cursor").hidden = true;
-  const lo = Math.min(...points.map((p) => p[1])), hi = Math.max(...points.map((p) => p[1]));
-  $("chart").setAttribute("aria-label", T[state.lang].history + ": " + dateWords(points[0][0]) + " → " +
-    dateWords(last[0]) + ", " + num(lo) + " … " + num(hi) + ", " + num(last[1]));
+  const lo = Math.min(...points.map((p) => p.v)), hi = Math.max(...points.map((p) => p.v));
+  $("chart").setAttribute("aria-label", T[state.lang].history + ": " + view.ends[0] + " → " + view.ends[1] + ", " +
+    (view.averaged ? view.idle + ", " : "") + num(lo) + " … " + num(hi) + ", " + num(last.v));
 }
 function probe(ev) {
   const n = state.points.length;
@@ -454,24 +521,22 @@ function probe(ev) {
   const i = Math.round(frac * (n - 1));
   $("cursor").hidden = false;
   $("cursor").style.left = (100 * i) / (n - 1) + "%";
-  $("readout").textContent = dateWords(state.points[i][0]) + ": " + num(state.points[i][1]);
+  $("readout").textContent = state.points[i].label + ": " + num(state.points[i].v);
 }
 async function showRange() {
   const b = state.latest && state.latest.langs && state.latest.langs[state.lang];
   if (!b) return;
   for (const btn of document.querySelectorAll("[data-range]"))
     btn.setAttribute("aria-pressed", String(Number(btn.dataset.range) === state.range));
-  let points = b.spark || [];
-  if (state.range === 30) points = points.slice(-30);
+  let history = null;
   if (state.range === 365 || state.range === 0) {
     const lang = state.lang;
     try {
-      const all = await historyFor(lang);
+      history = await historyFor(lang);
       if (lang !== state.lang) return;  // the language changed while loading
-      points = state.range ? all.slice(-365) : all;
     } catch (e) { /* the long history is a bonus: keep the 120 days */ }
   }
-  drawChart(points);
+  drawChart(chartView(state.range, b.spark || [], history, T[state.lang]));
 }
 
 // ------------------------------------------------------------------ render
@@ -482,7 +547,7 @@ function render() {
   $("name").textContent = t.name;
   $("tagline").textContent = t.tagline;
   $("h-history").textContent = t.history;
-  $("range-all").textContent = t.all;
+  for (const btn of document.querySelectorAll("[data-range]")) btn.textContent = t.ranges[btn.dataset.range];
   $("h-board").textContent = t.board;
   $("h-how").textContent = t.how;
   $("legend").textContent = t.legend;
@@ -609,7 +674,7 @@ for (const btn of document.querySelectorAll("[data-range]"))
 window.addEventListener("hashchange", () => { state.lang = pickLang(); render(); });
 $("chart").addEventListener("pointermove", probe);
 $("chart").addEventListener("pointerdown", probe);
-$("chart").addEventListener("pointerleave", () => { $("cursor").hidden = true; $("readout").textContent = T[state.lang].mid; });
+$("chart").addEventListener("pointerleave", () => { $("cursor").hidden = true; $("readout").textContent = state.idle; });
 
 state.lang = pickLang();
 render();
