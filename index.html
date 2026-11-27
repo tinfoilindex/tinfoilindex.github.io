@@ -339,8 +339,16 @@ const $ = (id) => document.getElementById(id);
 const state = { lang: "en", latest: null, range: 120, history: {}, points: [], idle: "", failed: false };
 
 // ----------------------------------------------------------------- helpers
+// A number without its sign, rounded the way people round: a half goes up (38.5 is 39, 1.25 is 1.3),
+// read off the number as it is written. The posts and the pictures round the same way (rounded in
+// texts.py), so the page never prints a number differently from them. A test compares the two.
+function roundUp(v, nd) {
+  const a = Math.abs(v);
+  const n = Math.round(Number(a + "e" + nd));
+  return Number.isFinite(n) ? (n / Math.pow(10, nd)).toFixed(nd) : a.toFixed(nd);
+}
 function num(v, signed) {
-  const s = Math.abs(v).toFixed(1).replace(".", T[state.lang].dec);
+  const s = roundUp(v, 1).replace(".", T[state.lang].dec);
   if (signed) return (v < 0 ? "−" : "+") + s;
   return (v < 0 ? "−" : "") + s;
 }
@@ -640,7 +648,7 @@ function render() {
   const chip = (r, cls) => {
     const s = el("span", "");
     s.appendChild(el("span", "tk " + cls, P + r.ticker));
-    s.appendChild(document.createTextNode(" " + Math.round(r.score)));
+    s.appendChild(document.createTextNode(" " + roundUp(r.score, 0)));
     return s;
   };
   if (b.driver && b.driver.ticker) {
@@ -648,7 +656,9 @@ function render() {
     s.appendChild(el("span", "tk", P + b.driver.ticker));
     if (b.driver.usual !== null && b.driver.usual !== undefined)
       s.appendChild(el("span", "up", " ×" + num(b.driver.usual)));
-    if (b.driver.title) s.appendChild(el("span", "muted", " " + b.driver.title));
+    // a name that only repeats the ticker (HAARP) is written once
+    if (b.driver.title && b.driver.title.trim().toUpperCase() !== String(b.driver.ticker).trim().toUpperCase())
+      s.appendChild(el("span", "muted", " " + b.driver.title));
     addRow(t.hottest, [s]);
   }
   for (const [key, cls] of [["rising", "up"], ["falling", "down"]]) {
@@ -663,7 +673,7 @@ function render() {
     const tr = el("tr");
     tr.appendChild(el("td", "tk", P + tk));
     tr.appendChild(el("td", "title", v.title || ""));
-    tr.appendChild(el("td", "n", String(Math.round(v.score))));
+    tr.appendChild(el("td", "n", roundUp(v.score, 0)));
     const c = v.change;
     tr.appendChild(el("td", "n " + (c > 0 ? "up" : c < 0 ? "down" : "muted"),
       c === null || c === undefined ? "" : num(c, c !== 0)));

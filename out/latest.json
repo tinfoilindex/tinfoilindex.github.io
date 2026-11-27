@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-27T07:22:17Z",
+ "generated_at": "2026-11-27T08:26:48Z",
  "demo": false,
  "prefix": "^",
  "levels": [
@@ -161,7 +161,7 @@
      "usual": 0.98
     },
     "JFK": {
-     "title": "John F. Kennedy assassination conspiracy theories",
+     "title": "JFK conspiracy theories",
      "score": 64.6,
      "prev": 75.2,
      "change": -10.6,
@@ -177,7 +177,7 @@
      "usual": 0.69
     },
     "HAARP": {
-     "title": "High-frequency Active Auroral Research Program",
+     "title": "HAARP",
      "score": 38.5,
      "prev": 30.4,
      "change": 8.1,
@@ -887,7 +887,7 @@
      "usual": 0.84
     },
     "DYATLOV": {
-     "title": "Гибель тургруппы Дятлова",
+     "title": "Перевал Дятлова",
      "score": 61.5,
      "prev": 64.3,
      "change": -2.8,
