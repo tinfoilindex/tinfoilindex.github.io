@@ -21,6 +21,8 @@ It measures attention, not belief. Reading about lizard people does not make you
 - `assets/fonts/`: the page's typeface, JetBrains Mono, with its licence.
 - `out/latest.json`: the latest reading, with every theory's own reading.
 - `out/history_en.csv` and `out/history_ru.csv`: every daily reading since December 2015.
+- `share_en.png` and `share_ru.png`: the picture a pasted link shows, redrawn with each reading.
+- `ru/`: the address for Russian readers, https://tinfoilindex.github.io/ru/. It opens the page in Russian.
 
 The files are updated automatically after each reading. A reading appears here once it has been posted to its Telegram channel.
 
