@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-27T08:26:48Z",
+ "generated_at": "2026-11-28T07:38:08Z",
  "demo": false,
  "prefix": "^",
  "levels": [
@@ -23,24 +23,24 @@
  ],
  "langs": {
   "en": {
-   "date": "2026-11-26",
+   "date": "2026-11-27",
    "label": "English",
-   "index": 69.2,
-   "prev_date": "2026-11-25",
-   "prev": 72.9,
-   "change": -3.7,
-   "direction": "down",
+   "index": 72.2,
+   "prev_date": "2026-11-26",
+   "prev": 69.2,
+   "change": 3.0,
+   "direction": "up",
    "level": "alert",
-   "sigma": 0.81,
-   "run": 3,
+   "sigma": 0.96,
+   "run": 1,
    "high": {
     "since": "2026-11-25",
-    "days": 1,
+    "days": 2,
     "record": false
    },
    "low": {
-    "since": "2026-11-21",
-    "days": 5,
+    "since": "2026-11-26",
+    "days": 1,
     "record": false
    },
    "basket": {
@@ -48,260 +48,256 @@
     "size": 26
    },
    "driver": {
-    "ticker": "TART",
-    "title": "Tartarian Empire",
-    "z": 3.84,
-    "usual": 2.38
+    "ticker": "BIRD",
+    "title": "Birds Aren't Real",
+    "z": 3.42,
+    "usual": 2.28
    },
    "rising": [
     {
-     "ticker": "HELI",
-     "score": 57.9,
-     "change": 40.2
+     "ticker": "MIB",
+     "score": 62.5,
+     "change": 24.7
     },
     {
      "ticker": "A51",
-     "score": 72.3,
-     "change": 25.5
+     "score": 87.3,
+     "change": 15.0
     },
     {
-     "ticker": "TART",
-     "score": 97.9,
-     "change": 14.0
+     "ticker": "HOLO",
+     "score": 64.8,
+     "change": 14.3
     }
    ],
    "falling": [
     {
-     "ticker": "CHEM",
-     "score": 29.9,
-     "change": -20.1
+     "ticker": "HELI",
+     "score": 38.2,
+     "change": -19.7
     },
     {
-     "ticker": "MJ12",
-     "score": 22.6,
-     "change": -14.0
+     "ticker": "SIM",
+     "score": 35.4,
+     "change": -15.8
     },
     {
-     "ticker": "BIRD",
-     "score": 86.6,
-     "change": -11.6
+     "ticker": "ABDU",
+     "score": 40.6,
+     "change": -15.1
     }
    ],
    "tickers": {
     "MOON": {
      "title": "Moon landing conspiracy theories",
-     "score": 39.7,
-     "prev": 40.9,
-     "change": -1.2,
-     "z": -0.42,
-     "usual": 0.8
+     "score": 46.0,
+     "prev": 39.7,
+     "change": 6.3,
+     "z": -0.16,
+     "usual": 0.92
     },
     "FLAT": {
      "title": "Modern flat Earth beliefs",
-     "score": 27.7,
-     "prev": 32.1,
-     "change": -4.4,
-     "z": -0.96,
-     "usual": 0.75
+     "score": 28.9,
+     "prev": 27.7,
+     "change": 1.2,
+     "z": -0.9,
+     "usual": 0.76
     },
     "CHEM": {
      "title": "Chemtrail conspiracy theory",
-     "score": 29.9,
-     "prev": 50.0,
-     "change": -20.1,
-     "z": -0.85,
-     "usual": 0.68
+     "score": 32.1,
+     "prev": 29.9,
+     "change": 2.2,
+     "z": -0.75,
+     "usual": 0.71
     },
     "REPT": {
      "title": "Reptilian conspiracy theory",
-     "score": 91.8,
-     "prev": 96.7,
-     "change": -4.9,
-     "z": 2.41,
-     "usual": 1.87
+     "score": 86.1,
+     "prev": 91.8,
+     "change": -5.7,
+     "z": 1.82,
+     "usual": 1.64
     },
     "A51": {
      "title": "Area 51",
-     "score": 72.3,
-     "prev": 46.8,
-     "change": 25.5,
-     "z": 0.96,
-     "usual": 1.19
+     "score": 87.3,
+     "prev": 72.3,
+     "change": 15.0,
+     "z": 1.93,
+     "usual": 1.42
     },
     "ROSW": {
      "title": "Roswell incident",
-     "score": 25.0,
-     "prev": 30.2,
-     "change": -5.2,
-     "z": -1.1,
-     "usual": 0.71
+     "score": 31.9,
+     "prev": 25.0,
+     "change": 6.9,
+     "z": -0.76,
+     "usual": 0.79
     },
     "UFO": {
      "title": "UFO conspiracy theories",
-     "score": 22.4,
-     "prev": 23.1,
-     "change": -0.7,
-     "z": -1.24,
-     "usual": 0.73
+     "score": 33.6,
+     "prev": 22.4,
+     "change": 11.2,
+     "z": -0.68,
+     "usual": 0.84
     },
     "ABDU": {
      "title": "Alien abduction",
-     "score": 55.7,
-     "prev": 59.4,
-     "change": -3.7,
-     "z": 0.23,
-     "usual": 1.07
+     "score": 40.6,
+     "prev": 55.7,
+     "change": -15.1,
+     "z": -0.38,
+     "usual": 0.89
     },
     "ILLU": {
      "title": "Illuminati",
-     "score": 47.8,
-     "prev": 55.7,
-     "change": -7.9,
-     "z": -0.09,
-     "usual": 0.98
+     "score": 55.7,
+     "prev": 47.8,
+     "change": 7.9,
+     "z": 0.23,
+     "usual": 1.05
     },
     "JFK": {
      "title": "JFK conspiracy theories",
-     "score": 64.6,
-     "prev": 75.2,
-     "change": -10.6,
-     "z": 0.6,
-     "usual": 1.25
+     "score": 54.5,
+     "prev": 64.6,
+     "change": -10.1,
+     "z": 0.18,
+     "usual": 1.07
     },
     "MKU": {
      "title": "MKUltra",
-     "score": 26.7,
-     "prev": 25.2,
-     "change": 1.5,
-     "z": -1.01,
-     "usual": 0.69
+     "score": 35.4,
+     "prev": 26.7,
+     "change": 8.7,
+     "z": -0.6,
+     "usual": 0.8
     },
     "HAARP": {
      "title": "HAARP",
-     "score": 38.5,
-     "prev": 30.4,
-     "change": 8.1,
-     "z": -0.47,
-     "usual": 0.87
+     "score": 37.8,
+     "prev": 38.5,
+     "change": -0.7,
+     "z": -0.5,
+     "usual": 0.86
     },
     "BERM": {
      "title": "Bermuda Triangle",
-     "score": 37.1,
-     "prev": 36.8,
-     "change": 0.3,
-     "z": -0.53,
-     "usual": 0.93
+     "score": 38.2,
+     "prev": 37.1,
+     "change": 1.1,
+     "z": -0.48,
+     "usual": 0.94
     },
     "MIB": {
      "title": "Men in black",
-     "score": 37.8,
-     "prev": 44.3,
-     "change": -6.5,
-     "z": -0.5,
-     "usual": 0.94
+     "score": 62.5,
+     "prev": 37.8,
+     "change": 24.7,
+     "z": 0.51,
+     "usual": 1.07
     },
     "PHIL": {
      "title": "Philadelphia Experiment",
-     "score": 25.2,
-     "prev": 26.5,
-     "change": -1.3,
-     "z": -1.09,
-     "usual": 0.61
+     "score": 29.9,
+     "prev": 25.2,
+     "change": 4.7,
+     "z": -0.85,
+     "usual": 0.69
     },
     "BIRD": {
      "title": "Birds Aren't Real",
-     "score": 86.6,
-     "prev": 98.2,
-     "change": -11.6,
-     "z": 1.87,
-     "usual": 1.57
+     "score": 96.8,
+     "prev": 86.6,
+     "change": 10.2,
+     "z": 3.42,
+     "usual": 2.28
     },
     "SIM": {
      "title": "Simulation hypothesis",
-     "score": 51.2,
+     "score": 35.4,
      "prev": 51.2,
-     "change": 0.0,
-     "z": 0.05,
-     "usual": 1.01
+     "change": -15.8,
+     "z": -0.6,
+     "usual": 0.91
     },
     "HOLO": {
      "title": "Hollow Earth",
-     "score": 50.5,
-     "prev": 38.2,
-     "change": 12.3,
-     "z": 0.02,
-     "usual": 1.0
+     "score": 64.8,
+     "prev": 50.5,
+     "change": 14.3,
+     "z": 0.61,
+     "usual": 1.08
     },
     "ANCI": {
      "title": "Ancient astronauts",
-     "score": 39.2,
-     "prev": 44.0,
-     "change": -4.8,
-     "z": -0.44,
-     "usual": 0.88
+     "score": 42.6,
+     "prev": 39.2,
+     "change": 3.4,
+     "z": -0.3,
+     "usual": 0.92
     },
     "MJ12": {
      "title": "Majestic 12",
-     "score": 22.6,
-     "prev": 36.6,
-     "change": -14.0,
-     "z": -1.23,
-     "usual": 0.72
+     "score": 21.4,
+     "prev": 22.6,
+     "change": -1.2,
+     "z": -1.3,
+     "usual": 0.7
     },
     "TART": {
      "title": "Tartarian Empire",
-     "score": 97.9,
-     "prev": 83.9,
-     "change": 14.0,
-     "z": 3.84,
-     "usual": 2.38
+     "score": 96.3,
+     "prev": 97.9,
+     "change": -1.6,
+     "z": 3.26,
+     "usual": 2.09
     },
     "DEAD": {
      "title": "Dead Internet theory",
-     "score": 33.0,
-     "prev": 43.5,
-     "change": -10.5,
-     "z": -0.71,
-     "usual": 0.82
+     "score": 27.5,
+     "prev": 33.0,
+     "change": -5.5,
+     "z": -0.97,
+     "usual": 0.76
     },
     "HELI": {
      "title": "Black helicopter",
-     "score": 57.9,
-     "prev": 17.7,
-     "change": 40.2,
-     "z": 0.32,
-     "usual": 1.06
+     "score": 38.2,
+     "prev": 57.9,
+     "change": -19.7,
+     "z": -0.48,
+     "usual": 0.92
     },
     "CROP": {
      "title": "Crop circle",
-     "score": 36.8,
-     "prev": 40.4,
-     "change": -3.6,
-     "z": -0.54,
-     "usual": 0.82
+     "score": 38.7,
+     "prev": 36.8,
+     "change": 1.9,
+     "z": -0.46,
+     "usual": 0.85
     },
     "NIBI": {
      "title": "Nibiru cataclysm",
-     "score": 63.4,
-     "prev": 70.7,
-     "change": -7.3,
-     "z": 0.55,
-     "usual": 1.1
+     "score": 48.3,
+     "prev": 63.4,
+     "change": -15.1,
+     "z": -0.07,
+     "usual": 0.99
     },
     "BIGF": {
      "title": "Bigfoot",
-     "score": 96.2,
-     "prev": 98.2,
-     "change": -2.0,
-     "z": 3.24,
-     "usual": 1.63
+     "score": 95.6,
+     "prev": 96.2,
+     "change": -0.6,
+     "z": 3.09,
+     "usual": 1.6
     }
    },
    "spark": [
-    [
-     "2026-07-30",
-     10.8
-    ],
     [
      "2026-07-31",
      10.6
@@ -777,28 +773,32 @@
     [
      "2026-11-26",
      69.2
+    ],
+    [
+     "2026-11-27",
+     72.2
     ]
    ]
   },
   "ru": {
-   "date": "2026-11-26",
+   "date": "2026-11-27",
    "label": "Russian",
-   "index": 39.9,
-   "prev_date": "2026-11-25",
-   "prev": 42.9,
-   "change": -3.0,
-   "direction": "down",
-   "level": "calm",
-   "sigma": -0.41,
-   "run": 3,
+   "index": 55.3,
+   "prev_date": "2026-11-26",
+   "prev": 39.9,
+   "change": 15.4,
+   "direction": "up",
+   "level": "alert",
+   "sigma": 0.21,
+   "run": 1,
    "high": {
-    "since": "2026-11-25",
-    "days": 1,
+    "since": "2026-11-12",
+    "days": 15,
     "record": false
    },
    "low": {
-    "since": "2026-11-22",
-    "days": 4,
+    "since": "2026-11-26",
+    "days": 1,
     "record": false
    },
    "basket": {
@@ -806,260 +806,256 @@
     "size": 26
    },
    "driver": {
-    "ticker": "GRIB",
-    "title": "Ленин — гриб",
-    "z": 2.56,
-    "usual": 1.56
+    "ticker": "YETI",
+    "title": "Снежный человек",
+    "z": 2.91,
+    "usual": 1.45
    },
    "rising": [
     {
-     "ticker": "GRIB",
-     "score": 92.8,
-     "change": 68.8
+     "ticker": "CHRONO",
+     "score": 77.2,
+     "change": 48.1
     },
     {
-     "ticker": "ROSW",
-     "score": 40.4,
-     "change": 23.5
+     "ticker": "A51",
+     "score": 85.7,
+     "change": 35.5
     },
     {
-     "ticker": "CHEM",
-     "score": 22.1,
-     "change": 12.9
+     "ticker": "PSY",
+     "score": 53.2,
+     "change": 28.4
     }
    ],
    "falling": [
     {
-     "ticker": "CHRONO",
-     "score": 29.1,
-     "change": -25.1
+     "ticker": "SIM",
+     "score": 33.8,
+     "change": -22.2
     },
     {
-     "ticker": "PHIL",
-     "score": 14.3,
-     "change": -23.9
+     "ticker": "ROSW",
+     "score": 25.5,
+     "change": -14.9
     },
     {
-     "ticker": "HOLO",
-     "score": 25.4,
-     "change": -21.6
+     "ticker": "DULLES",
+     "score": 12.2,
+     "change": -12.4
     }
    ],
    "tickers": {
     "ZAGOVOR": {
      "title": "Теория заговора",
-     "score": 22.8,
-     "prev": 22.3,
-     "change": 0.5,
-     "z": -1.22,
-     "usual": 0.74
+     "score": 30.8,
+     "prev": 22.8,
+     "change": 8.0,
+     "z": -0.81,
+     "usual": 0.82
     },
     "MOON": {
      "title": "Лунный заговор",
-     "score": 38.2,
-     "prev": 32.1,
-     "change": 6.1,
-     "z": -0.48,
-     "usual": 0.83
+     "score": 32.7,
+     "prev": 38.2,
+     "change": -5.5,
+     "z": -0.72,
+     "usual": 0.76
     },
     "REPT": {
      "title": "Рептилоиды",
-     "score": 90.9,
-     "prev": 97.3,
-     "change": -6.4,
-     "z": 2.3,
-     "usual": 1.54
+     "score": 84.3,
+     "prev": 90.9,
+     "change": -6.6,
+     "z": 1.68,
+     "usual": 1.38
     },
     "DULLES": {
      "title": "План Даллеса",
-     "score": 24.6,
-     "prev": 27.7,
-     "change": -3.1,
-     "z": -1.12,
-     "usual": 0.81
+     "score": 12.2,
+     "prev": 24.6,
+     "change": -12.4,
+     "z": -1.97,
+     "usual": 0.69
     },
     "CHRONO": {
      "title": "Новая хронология",
-     "score": 29.1,
-     "prev": 54.2,
-     "change": -25.1,
-     "z": -0.89,
-     "usual": 0.84
+     "score": 77.2,
+     "prev": 29.1,
+     "change": 48.1,
+     "z": 1.22,
+     "usual": 1.27
     },
     "DYATLOV": {
      "title": "Перевал Дятлова",
-     "score": 61.5,
-     "prev": 64.3,
-     "change": -2.8,
-     "z": 0.47,
-     "usual": 1.17
+     "score": 63.2,
+     "prev": 61.5,
+     "change": 1.7,
+     "z": 0.54,
+     "usual": 1.2
     },
     "ILLU": {
      "title": "Иллюминаты",
-     "score": 15.2,
-     "prev": 25.9,
-     "change": -10.7,
-     "z": -1.72,
-     "usual": 0.72
+     "score": 23.9,
+     "prev": 15.2,
+     "change": 8.7,
+     "z": -1.16,
+     "usual": 0.8
     },
     "A51": {
      "title": "Зона 51",
-     "score": 50.2,
-     "prev": 40.9,
-     "change": 9.3,
-     "z": 0.01,
-     "usual": 1.0
+     "score": 85.7,
+     "prev": 50.2,
+     "change": 35.5,
+     "z": 1.79,
+     "usual": 1.49
     },
     "ROSW": {
      "title": "Розуэлльский инцидент",
-     "score": 40.4,
-     "prev": 16.9,
-     "change": 23.5,
-     "z": -0.39,
-     "usual": 0.9
+     "score": 25.5,
+     "prev": 40.4,
+     "change": -14.9,
+     "z": -1.07,
+     "usual": 0.75
     },
     "BERM": {
      "title": "Бермудский треугольник",
-     "score": 29.5,
-     "prev": 28.5,
-     "change": 1.0,
-     "z": -0.87,
-     "usual": 0.85
+     "score": 54.7,
+     "prev": 29.5,
+     "change": 25.2,
+     "z": 0.19,
+     "usual": 1.04
     },
     "FLAT": {
      "title": "Плоская Земля",
-     "score": 25.0,
-     "prev": 38.7,
-     "change": -13.7,
-     "z": -1.1,
-     "usual": 0.75
+     "score": 16.5,
+     "prev": 25.0,
+     "change": -8.5,
+     "z": -1.62,
+     "usual": 0.66
     },
     "CHEM": {
      "title": "Химиотрассы",
-     "score": 22.1,
-     "prev": 9.2,
-     "change": 12.9,
-     "z": -1.26,
-     "usual": 0.63
+     "score": 15.4,
+     "prev": 22.1,
+     "change": -6.7,
+     "z": -1.7,
+     "usual": 0.54
     },
     "HAARP": {
      "title": "HAARP",
-     "score": 30.4,
-     "prev": 24.0,
-     "change": 6.4,
-     "z": -0.83,
-     "usual": 0.59
+     "score": 32.7,
+     "prev": 30.4,
+     "change": 2.3,
+     "z": -0.72,
+     "usual": 0.64
     },
     "UFO": {
      "title": "Уфология",
-     "score": 35.9,
-     "prev": 45.0,
-     "change": -9.1,
-     "z": -0.58,
-     "usual": 0.89
+     "score": 45.3,
+     "prev": 35.9,
+     "change": 9.4,
+     "z": -0.19,
+     "usual": 0.96
     },
     "ANCI": {
      "title": "Палеоконтакт",
-     "score": 37.1,
-     "prev": 35.7,
-     "change": 1.4,
-     "z": -0.53,
-     "usual": 0.91
+     "score": 47.5,
+     "prev": 37.1,
+     "change": 10.4,
+     "z": -0.1,
+     "usual": 0.98
     },
     "HOLO": {
      "title": "Полая Земля",
-     "score": 25.4,
-     "prev": 47.0,
-     "change": -21.6,
-     "z": -1.08,
-     "usual": 0.78
+     "score": 31.2,
+     "prev": 25.4,
+     "change": 5.8,
+     "z": -0.79,
+     "usual": 0.83
     },
     "SIM": {
      "title": "Гипотеза симуляции",
-     "score": 56.0,
-     "prev": 65.9,
-     "change": -9.9,
-     "z": 0.24,
-     "usual": 1.05
+     "score": 33.8,
+     "prev": 56.0,
+     "change": -22.2,
+     "z": -0.67,
+     "usual": 0.87
     },
     "PHIL": {
      "title": "Филадельфийский эксперимент",
-     "score": 14.3,
-     "prev": 38.2,
-     "change": -23.9,
-     "z": -1.79,
-     "usual": 0.61
+     "score": 25.2,
+     "prev": 14.3,
+     "change": 10.9,
+     "z": -1.09,
+     "usual": 0.74
     },
     "CROP": {
      "title": "Круги на полях",
-     "score": 73.7,
-     "prev": 64.1,
-     "change": 9.6,
-     "z": 1.03,
-     "usual": 1.28
+     "score": 64.8,
+     "prev": 73.7,
+     "change": -8.9,
+     "z": 0.61,
+     "usual": 1.16
     },
     "KYSH": {
      "title": "Кыштымский карлик",
-     "score": 59.9,
-     "prev": 67.0,
-     "change": -7.1,
-     "z": 0.4,
+     "score": 60.6,
+     "prev": 59.9,
+     "change": 0.7,
+     "z": 0.43,
      "usual": 1.11
     },
     "PETRO": {
      "title": "Петрозаводский феномен",
-     "score": 64.1,
-     "prev": 52.7,
-     "change": 11.4,
-     "z": 0.58,
-     "usual": 1.19
+     "score": 85.4,
+     "prev": 64.1,
+     "change": 21.3,
+     "z": 1.77,
+     "usual": 1.69
     },
     "PSY": {
      "title": "Психотронное оружие",
-     "score": 24.8,
-     "prev": 25.5,
-     "change": -0.7,
-     "z": -1.11,
-     "usual": 0.75
+     "score": 53.2,
+     "prev": 24.8,
+     "change": 28.4,
+     "z": 0.13,
+     "usual": 1.03
     },
     "KADR25": {
      "title": "25-й кадр",
-     "score": 44.3,
-     "prev": 55.2,
-     "change": -10.9,
-     "z": -0.23,
-     "usual": 0.96
+     "score": 38.0,
+     "prev": 44.3,
+     "change": -6.3,
+     "z": -0.49,
+     "usual": 0.92
     },
     "GRIB": {
      "title": "Ленин — гриб",
-     "score": 92.8,
-     "prev": 24.0,
-     "change": 68.8,
-     "z": 2.56,
-     "usual": 1.56
+     "score": 92.9,
+     "prev": 92.8,
+     "change": 0.1,
+     "z": 2.57,
+     "usual": 1.58
     },
     "YETI": {
      "title": "Снежный человек",
-     "score": 90.3,
-     "prev": 97.3,
-     "change": -7.0,
-     "z": 2.23,
-     "usual": 1.33
+     "score": 94.8,
+     "prev": 90.3,
+     "change": 4.5,
+     "z": 2.91,
+     "usual": 1.45
     },
     "TART": {
      "title": "Тартария",
-     "score": 39.9,
-     "prev": 43.0,
-     "change": -3.1,
-     "z": -0.41,
-     "usual": 0.92
+     "score": 38.5,
+     "prev": 39.9,
+     "change": -1.4,
+     "z": -0.47,
+     "usual": 0.91
     }
    },
    "spark": [
-    [
-     "2026-07-30",
-     38.6
-    ],
     [
      "2026-07-31",
      15.7
@@ -1535,12 +1531,16 @@
     [
      "2026-11-26",
      39.9
+    ],
+    [
+     "2026-11-27",
+     55.3
     ]
    ]
   }
  },
  "spread": {
-  "date": "2026-11-26",
-  "en_minus_ru": 29.3
+  "date": "2026-11-27",
+  "en_minus_ru": 16.9
  }
 }
